@@ -7,9 +7,10 @@ import { schema } from '@osd/config-schema';
 import { RequestParams } from '@opensearch-project/opensearch';
 
 import { IRouter } from '../../../../src/core/server';
+import { MetricsServiceSetup } from '../metrics_service';
 import { ServiceEndpoints } from '../../common';
 
-export function registerDslRoute({ router }: { router: IRouter }) {
+export function registerDslRoute(router: IRouter, metricsServiceSetup: MetricsServiceSetup) {
   router.post(
     {
       path: ServiceEndpoints.GetSearchResults,
@@ -27,6 +28,9 @@ export function registerDslRoute({ router }: { router: IRouter }) {
           'search',
           params
         );
+        console.log(resp);
+        metricsServiceSetup.addMetric(ServiceEndpoints.GetSearchResults, 'GET', '200', 1);
+
         return response.ok({
           body: resp,
         });
